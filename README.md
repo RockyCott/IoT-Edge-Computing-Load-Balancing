@@ -1,0 +1,2 @@
+# IoT-Edge-Computing-Load-Balancing
+ This project demonstrates a simple Internet of Things (IoT) architecture using edge computing to distribute the processing load between multiple nodes based on conditions determined by a basic AI model. The nodes are built with **Rust** (using the **Axum** framework), while the IoT devices are simulated in **Python**. A machine learning model is used to decide whether to process data locally or redistribute it to another node.
