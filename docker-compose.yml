@@ -1,0 +1,16 @@
+version: '3'
+services:
+  node1:
+    build: ./rust/axum_node
+    ports:
+      - "3000:3000"
+
+  node2:
+    build: ./rust/axum_node
+    ports:
+      - "3001:3000"
+
+  node3:
+    build: ./rust/axum_node
+    ports:
+      - "3002:3000"
