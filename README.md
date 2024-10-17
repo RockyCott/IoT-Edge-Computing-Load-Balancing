@@ -1,21 +1,69 @@
-# IoT Edge Computing with Load Balancing using Rust and Python
+# SixEyes Edge
 
-This project demonstrates a simple Internet of Things (IoT) architecture using edge computing to distribute the processing load between multiple nodes based on conditions determined by a basic AI model. The nodes are built with **Rust** (using the **Axum** framework), while the IoT devices are simulated in **Python**. A machine learning model is used to decide whether to process data locally or redistribute it to another node.
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)](https://www.python.org/)
+[![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+A scalable framework for integrating IoT devices with edge computing nodes, inspired by precision and control.
 
-- **IoT Sensor Simulation**: Simulates IoT devices that send data to an edge node for processing.
-- **Edge Computing**: Each edge node receives and processes sensor data or redistributes the load to another node.
-- **Load Balancing with AI**: A simple AI model is used to decide whether the load should be processed locally or sent to another node.
+This project aims to build a scalable framework that integrates **IoT (Internet of Things)**, **Edge Computing**, and potential **AI** components. The framework provides a modular architecture to simulate sensors, process data on edge devices, and transmit data to a central server.
+
+## Project Structure
+
+- **Sensor Simulation**: Simulates IoT devices (starting with temperature sensor) that send data to an edge node for processing. Built in Python.
+- **Edge Layer**: Holds the Rust-based Axum server which acts as an edge device receiving and processing sensor data or redistributes the load.
+- **Api Design Docs**: Documentation detailing API design standards, conventions, and available endpoints.
+- **Tests**: Unit and integration tests for both the sensors and the edge layer.
+- **Docs**: General documentation for the architecture, design decisions, and roadmap.
 - **Multi-node Setup**: Multiple Rust nodes running in Docker containers, with inter-node communication enabled.
 
-## Technologies
+## Getting Started
 
-- **Rust**: Backend services are implemented with the Axum web framework.
-- **Axum**: Web framework in Rust for handling HTTP requests.
-- **Python**: Simulates IoT devices that generate and send sensor data.
-- **Machine Learning**: A basic model (saved in `joblib` format) is used to make decisions on load distribution.
-- **Docker**: Used to containerize and manage multiple nodes.
+### Prerequisites
+
+- **Python** Simulates IoT devices that generate and send sensor data.
+- **Rust** for edge layer development.
+- **Cargo**: Rust’s package manager to build and run the server.
+
+### Setup
+
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/RockyCott/SixEyes-Edge.git
+    cd iot-edge-framework
+    ```
+
+2. **Install Python dependencies** (for sensor simulations):
+
+In the `python/` folder, there is a `requirements.txt` file. 
+    ```bash
+    cd sensor-simulations/temperature_sensor
+    pip install -r requirements.txt
+    ```
+
+3. **Run the temperature sensor simulation**:
+    ```bash
+    python sensor_simulation.py
+    ```
+
+4. **Run the Rust edge server** (in another terminal):
+    ```bash
+    cd edge-layer/axum_server
+    cargo run
+    ```
+
+5. The sensor will send HTTP POST requests to the Axum server. Check the console for the received data.
+
+### Sensor Payload Structure
+
+```json
+{
+    "sensor_id": "T1",
+    "temperature": 22.5,
+    "status": "active",
+    "timestamp": "2024-10-16T12:45:00Z"
+}
+```
 
 ## Prerequisites
 
@@ -108,16 +156,25 @@ docker logs node3
 
 The AI model used for load balancing is a basic classification model loaded from the ai_model.pkl file. You can replace this model with your own machine learning model by training it on relevant data and saving it in joblib format.
 
-## Code Structure
-- rust/axum_node/: Contains the Rust code for the edge nodes.
-- python/sensor_simulation.py: Python script to simulate IoT sensor data.
-- docker-compose.yml: Docker configuration to run multiple nodes.
+## Why Consider it an Architectural Framework?
 
-## Future Improvements
-- Advanced AI Models: Replace the basic model with more sophisticated algorithms to make more complex load-balancing decisions.
+1. **Scalable Architecture**: It provides a layered design that allows easy expansion of devices, data, and edge nodes, ensuring the system can grow as needed without sacrificing performance.
+2. **Standardization**: By implementing strict naming conventions, API standards, and modular components, the framework promotes consistency and best practices across all components.
+3. **Edge Focused**: Unlike traditional IoT solutions, this framework emphasizes the importance of processing data at the edge, closer to the source, minimizing latency and reducing load on central servers.
+4. **Customizable Components**: The framework is highly modular, allowing for integration of new sensors, edge devices, and cloud components without disrupting the core system.
 
-- Edge Caching: Implement edge caching mechanisms to reduce latency.
-Security: Add authentication and authorization mechanisms to secure inter-node communication.
+Whether you're building a small IoT project or a complex network of edge devices, the SixEyes Edge Framework offers a standardized approach to design, development, and deployment.
+
+## Name Justification
+
+The framework is named **SixEyes Edge** as an homage to **Gojo Satoru's *Six Eyes* technique** from ***Jujutsu Kaisen***, which grants him unparalleled **perception and control**. In a similar fashion, the framework enables the seamless monitoring and management of data generated by IoT devices at the edge, ensuring optimized data processing and scalability. Just as Gojo's *Six Eyes* allows him to perceive everything with precision, this framework is designed to handle complex IoT environments with clarity and efficiency, allowing developers to manage networks of devices and edge computing nodes in a flexible and scalable manner.
 
 ## Contributing
-If you'd like to contribute, feel free to submit a pull request or open an issue to discuss improvements.
+
+If you'd like to contribute, feel free to submit a pull request or open an issue to discuss improvements. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Thank you for using and reviewing about SixEyes Edge. ❤️

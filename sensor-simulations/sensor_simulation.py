@@ -5,9 +5,9 @@ from enum import Enum
 
 # Enum to represent the state of the sensor
 class Status(Enum):
-    ACTIVE = 1
-    INACTIVE = 2
-    ERROR = 3
+    ACTIVE = 'ACTIVE'
+    INACTIVE = 'INACTIVE'
+    ERROR = 'ERROR'
 
 # Class that represents a temperature sensor
 class TemperatureSensor:
