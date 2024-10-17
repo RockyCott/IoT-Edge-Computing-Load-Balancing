@@ -2,6 +2,7 @@ import random
 import time 
 from datetime import datetime
 from enum import Enum
+import requests
 
 # Enum to represent the state of the sensor
 class Status(Enum):
@@ -25,7 +26,7 @@ class TemperatureSensor:
             else:
                 # Modifies the previous value slightly
                 variation = random.uniform(-0.5, 0.5)
-                self.temperatura = round(min(max(self.temperatura + variation, 15), 30), 2)
+                self.temperature = round(min(max(self.temperature + variation, 15), 30), 2)
         elif self.status == Status.INACTIVE:
             self.temperature = None
         elif self.status == Status.ERROR:
@@ -36,7 +37,7 @@ class TemperatureSensor:
         # Simulate the behavior of the sensor according to its status
         if self.status == Status.ACTIVE:
             # Simulate a random temperature between 15 and 30 degrees Celsius
-            self.temperature = self.generate_temperature()
+            self.generate_temperature()
         elif self.status == Status.INACTIVE:
             self.temperature = None
         elif self.status == Status.ERROR:
@@ -45,7 +46,7 @@ class TemperatureSensor:
         # Return a tuple with the captured data
         return {
             'sensor_id': self.sensor_id,
-            'status': self.status,
+            'status': self.get_status_value(),
             'temperature': self.temperature,
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
@@ -53,8 +54,8 @@ class TemperatureSensor:
     def change_status(self, new_status):
         self.status = new_status
 
-    def get_status(self):
-        return self.status
+    def get_status_value(self):
+        return self.status.value
     
     def change_status_with_probability(self):
         random_number = random.random()
@@ -65,6 +66,17 @@ class TemperatureSensor:
         else:
             self.change_status(Status.ACTIVE)
         
+# Function to send data to the edge layey
+def send_data(sensor_data):
+    try:
+        response = requests.post('http://localhost:3000/', json=sensor_data)
+        if response.status_code == 200:
+            print("Datos enviados correctamente")
+            print(response.text)
+        else:
+            print("Error al enviar los datos", response.status_code)
+    except requests.exceptions.RequestException as e:
+        print(f"Error en la petición: {e}")
 
 # Simulate the operation of the sensor
 def simulate_sensor():
@@ -74,6 +86,9 @@ def simulate_sensor():
         # Capture data
         data = sensor.capture_temperature()
         print(data)
+
+        # Send data to the edge layer
+        send_data(data)
 
         # Change the status of the sensor
         sensor.change_status_with_probability()
