@@ -31,5 +31,5 @@ fn should_redistribute(temperature: f64, energy: f64) -> bool {
     // let features = vec![vec![temperature, energy]];
     // let prediction: Vec<i32> = model.call_method1("predict", (features,)).unwrap().extract().unwrap();
     // prediction[0] == 1
-    temperature > 30.0
+    temperature > 25.0
 }
