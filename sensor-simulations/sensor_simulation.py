@@ -1,3 +1,4 @@
+import os
 import random
 import time 
 from datetime import datetime
@@ -26,11 +27,11 @@ class TemperatureSensor:
             else:
                 # Modifies the previous value slightly
                 variation = random.uniform(-0.5, 0.5)
+                print(f"Variation: {variation}")
+                print(f"Previous temperature: {self.temperature}")
                 self.temperature = round(min(max(self.temperature + variation, 15), 30), 2)
-        elif self.status == Status.INACTIVE:
+        elif self.status == Status.INACTIVE or self.status == Status.ERROR:
             self.temperature = None
-        elif self.status == Status.ERROR:
-            self.temperature = 'ERROR'
 
     # Method to capture the temperature
     def capture_temperature(self):
@@ -38,10 +39,8 @@ class TemperatureSensor:
         if self.status == Status.ACTIVE:
             # Simulate a random temperature between 15 and 30 degrees Celsius
             self.generate_temperature()
-        elif self.status == Status.INACTIVE:
+        elif self.status == Status.INACTIVE or self.status == Status.ERROR:
             self.temperature = None
-        elif self.status == Status.ERROR:
-            self.temperature = 'ERROR'
 
         # Return a tuple with the captured data
         return {
@@ -69,7 +68,8 @@ class TemperatureSensor:
 # Function to send data to the edge layey
 def send_data(sensor_data):
     try:
-        response = requests.post('http://localhost:3000/', json=sensor_data)
+        edge_url = os.getenv('EDGE_URL', 'http://localhost:3000')
+        response = requests.post(edge_url, json=sensor_data)
         if response.status_code == 200:
             print("Datos enviados correctamente")
             print(response.text)
@@ -80,7 +80,8 @@ def send_data(sensor_data):
 
 # Simulate the operation of the sensor
 def simulate_sensor():
-    sensor = TemperatureSensor(sensor_id="T1")
+    sensor_id = os.getenv('SENSOR_ID', 'default_sensor')
+    sensor = TemperatureSensor(sensor_id)
 
     while True:
         # Capture data

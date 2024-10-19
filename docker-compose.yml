@@ -1,31 +1,77 @@
 version: '3.8'
-services:
-  nodo1:
-    build: ./nodo
-    ports:
-      - "3000:3000"
-    environment:
-      - CONFIG_FILE=config/nodo1_config.json
 
-  nodo2:
-    build: ./nodo
+services:
+  # Edge Node 1
+  axum_node_1:
+    build: ./edge-layer/axum_node # Relative path to the Dockerfile of the axum_node
+    ports:
+      - "3000:3000"    # Export port 3000 to the host
+    networks:
+      - edge_network
+    restart: unless-stopped # Reloading the container if it fails
+
+  # Edge Node 2
+  axum_node_2:
+    build: ./edge-layer/axum_node
     ports:
       - "3001:3000"
+    networks:
+      - edge_network
+    restart: unless-stopped
+  
+  # Temperature Sensor 1 - Edge Node 1
+  sensor_1:
+    build:
+      context: ./sensor-simulations
+      dockerfile: Dockerfile.sensor
+    depends_on:
+      - axum_node_1
     environment:
-      - CONFIG_FILE=config/nodo2_config.json
+      - SENSOR_ID=T_1
+      - EDGE_URL=http://axum_node_1:3000
+    networks:
+      - edge_network
 
-  sensor1:
-    build: ./sensor
-    ports:
-      - "5000:5000"
+  # Temperature Sensor 1 - Edge Node 2
+  sensor_2:
+    build:
+      context: ./sensor-simulations
+      dockerfile: Dockerfile.sensor
+    depends_on:
+      - axum_node_2
     environment:
-      - SENSOR_ID=sensor1
-      - MAQUINA_ID=maquina1
+      - SENSOR_ID=T_1
+      - EDGE_URL=http://axum_node_2:3000
+    networks:
+      - edge_network
+  
+  # Temperature Sensor 2 - Edge Node 1
+  sensor_3:
+    build:
+      context: ./sensor-simulations
+      dockerfile: Dockerfile.sensor
+    depends_on:
+      - axum_node_2
+    environment:
+      - SENSOR_ID=T_2
+      - EDGE_URL=http://axum_node_2:3000
+    networks:
+      - edge_network
 
-  sensor2:
-    build: ./sensor
-    ports:
-      - "5001:5000"
+  # Temperature Sensor 3 - Edge Node 2
+  sensor_4:
+    build:
+      context: ./sensor-simulations
+      dockerfile: Dockerfile.sensor
+    depends_on:
+      - axum_node_2
     environment:
-      - SENSOR_ID=sensor2
-      - MAQUINA_ID=maquina1
+      - SENSOR_ID=T_3
+      - EDGE_URL=http://axum_node_2:3000
+    networks:
+      - edge_network
+
+# Network Configuration
+networks:
+  edge_network:
+    driver: bridge
